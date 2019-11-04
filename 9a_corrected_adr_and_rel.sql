@@ -1,5 +1,5 @@
-drop table logNonRel;
-create table logNonRel as select
+drop table logRel;
+create table logRel as select
 searchnamedef as Searchname,
 relationnumber as "Relation number", 
 in_name as "Name line 1",
@@ -36,8 +36,8 @@ case when length(country)>2 then 'NO' else country end as Country,
 from logisticsadresses
 where relationnumber != "";
 
-drop table logRel;
-create table logRel as
+drop table logNonRel;
+create table logNonRel as
 select
 searchnamedef as Searchname,
 '99999998' as "Relation number", 
@@ -75,7 +75,8 @@ case when length(country)>2 then 'NO' else country end as Country,
 from logisticsadresses
 where relationnumber = "";
 
-.once _businessrelations.csv
+
+create table busrel2 as
 select 
  searchname,
   relationNumber ,
@@ -110,3 +111,37 @@ end as  postalcode,
   vatNumberOrg ,
   vatNumber
    from relations;
+   
+.once _businessrelationsMain.csv
+select 
+  searchname,
+  relationNumber ,
+  substr((case when length("nameLine1")=0 then '-' else "nameLine1" end),1,35) as nameLine1,
+  substr((case when length("nameLine2")=0 then '-' else "nameLine2" end),1,35) as nameLine2,
+  nameLine3,
+  substr((case when length("addressLine1")=0 then '-' else "addressLine1" end),1,35) as addressLine1,
+  addressLine2 ,
+  addressLine3 ,
+  postalcode as postalCode,
+  city ,
+  countryCode2 as countryCode,
+  subentityCode,
+  postOfficeBox,
+  postOfficeBoxPostalcode,
+  postOfficeBoxCity,
+  postOfficeBoxCountry,
+  telephoneNumber,
+  telefaxNumber,
+  emailAddress,
+  internetAddress,
+  contactPerson,
+  typeOfRelation,
+  currencyCode,
+  vatCode,
+  languageCode,
+  relationGroup,
+  paymentTerm,
+  creditLimit,
+  vatNumberOrg ,
+  vatNumber
+from busrel2; 
