@@ -1,0 +1,84 @@
+﻿PRGR_KODE;PRGR_NAVN;EKSTERN_VERDI;SPES_PRGR_KODE;PRODKAT
+5000;5000 - Pakker til bedrift;Parcels;SPCL;
+5100;5100 - Stykkgods til Bedrift;Groupage;;
+5200;5200 - Før 7;Early Delivery;;
+5300;5300 - Partilast til bedrift;Part loads;;
+9100;9100 - Retur stykkgods fra bedrift;Retur stykkgods fra ;;
+9800;9800;9800;;
+AKER;Supply Services *;BC - Supply Services;;
+BIL;Biler;Biler;;
+BRUS;Mineralvann o.l.;Mineralvann;;
+BÅT;Båter;Båter;;
+CBS;Cargo Bulk Split;Bilk Split;;
+CBSP;Bulk Split;BC - Bulk Split;;
+COCG;Cont. *;BC - Cont.;;
+CONT;Container;Container;;
+COOL;Cool *;Cool;SPCL;cool
+CSCG;Curbside *;BC - Curbside;SPCL;
+CURB;Curb Side Delivery;Curb Side Delivery;SPCL;
+DAVA;Dagligvare;Dagligvare;SPES;
+DEKK;Dekk;Dekk;;
+DIM;Dimensjonert;Dimensjonert;;
+DKSV;Danmark_SVG_PLN;Danmark_SVG_PLN;;
+DRY;StandardDry;Standard Dry;SPCL;
+DVCG;Grocery *;BC - Grocery;SPCL;grocery
+EMBL;Returemb. - 50%;Returemb. - 50%;;
+ENGM;Domestic haul Air&Sea;Domestic haul Air&Se;;
+FISK;Fersk fisk;Fersk fisk;;
+FLER;Bedriftspakke Flerkolli;Bedriftspakke Flerko;;
+FROZ;Frys Uk/Kont;Frys Uk/Kont;;
+FRYS;Frysegods;Frysegods;SPES;
+FRZE;Frozen *;BC - Frozen;SPCL;frozen
+GCED;General Cargo - Early Delivery *;General Cargo - Earl;;stdg_tidl
+GCID;General Cargo - Inhouse Delivery;GC- Inhouse Delivery;;
+GCLD;General Cargo - Late Delivery *;GC - Late Delivery;;
+GCTL;Gods Tidlig Levering;Gods Tidlig Levering;;
+GKCG;Spec.Ind. *;BC - Spec.Ind.;;spec_ind
+GLSC;Lokalbåter *;BC - Lokalbåter;;
+GNCG;Gods Std. *;BC - Gods Std.;SPCL;stdg
+GNDL;Desktop Delivery;Desktop Delivery;;
+GRCR;Grocery *;BC - grocery;;
+HDCG;Home *;BC - Home;;
+HENG;Henger;Henger;;
+HOME;Home delivery;Home delivery;;
+HUSK;Hurtigbåt Lokal;Hurtigbåt Lokal;;
+K/K;Kai/Kai;Kai/Kai;;
+KJØL;Kjølegods;Kjølegods;SPES;
+KROM;Bransjespesifikt Produkt;Kunder med Omex spes;SPES;
+LOSK;Lokal Båt;Lokal Båt;;
+LSHC;Hurtigbåter *;BC - Hurtigbåter;;
+MASK;Anleggsmaskiner;Anleggsmaskiner;;
+MEL;Industrilaster;Industrilaster;;
+MOBL;Furniture;BC - Furniture;;
+MPSM;Møbelprod Sunnmøre;MP Sunnmøre;;
+MVCG;Mineralwater *;BC - Mineralwater;;
+MØBL;Møbler;Møbler;;
+MØRE;Mørerutene;Mørerutene;;
+NSJØ;Kont./UK;Kont./UK;;
+OLJE;Olje-Offshore;Olje-Offshore;;
+PAKK;Bring PTT;Bring PTT;;
+PCCG;Parcels *;BC - Parcels;;pakke
+PICG;Priority *;BC - Priority;SPCL;
+PRDL;Private *;BC - Private;SPCL;
+PRIO;Prioritert;Prioritert;SPES;
+PRIV;Privatgods;Privatgods;SPES;
+RGIA;RGIA O&E Supply;RGIA O&E Supply;;
+RTPC;Packing *;BC - Packing;;
+SACK;Pantesekker Retur *;NR-sekk;;
+SCFF;FF Business;FF Business;;
+SCIC;Industrial Cargo;Industrial Cargo;;
+SCLC;Liner Cargo;Liner Cargo;;
+SCPC;Project Cargo *;Project Cargo;;
+SCSS;SC Spansets;SC Spansets;;
+SECA;Sea-Cargo Std;Sea-Cargo Std;;
+SPCL;Special *;BC - Special;;special
+SPED;Speditørgods Term;Speditørgods Term;;
+SPEP;Speditørgods Parti;Speditørgods Parti;;
+SPES;Spesialtransport;Spesialtransport;;
+SPET;Speditørgods Term;Speditørgods Term;;
+TATE;Sukker;Sukker;;
+TEST;Testgruppe1;Testgruppe;;
+TIRE;Tires *;BC - Tires;;
+TØRR;Tørrlast;Tørrlast;SPES;
+VARM;Varmegods;Varmegods;SPES;
+WARM;Warm *;BC - Warm;SPCL;
