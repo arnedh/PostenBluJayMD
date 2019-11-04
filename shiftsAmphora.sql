@@ -33,12 +33,99 @@ drop table NPBP7_Enhet;
 .import "Strategisk-OttarView-108-2019-01-18-1407.txt" AlystraShifts                                       
 .import "Strategisk-OttarView-109-2019-01-18-1407.txt" AlystraShifts                                       
 .import "Strategisk-OttarView-110-2019-01-18-1409.txt" AlystraShifts                                       
-.import "Strategisk-OttarView-112-2019-01-18-1409.txt" AlystraShifts                  
+.import "Strategisk-OttarView-112-2019-01-18-1409.txt" AlystraShifts    
+
+.mode tabs
+
+drop table AmphoraTrips;
+.import "Fixed pickup orders from Amphora.txt" AmphoraTrips              
+
+drop table AmphoraAgents;
+.import "Agenter Amphora.txt" AmphoraAgents    
 
 
 
 .header on
 .mode tabs
+
+
+.once alystratrips.txt
+select distinct
+"" as 	OrderTemplateNumber	,
+AKTOERNR as 	Principal	,
+"" as 	Department	,
+"f" as 	HandlingCode	,
+"" as 	Reference	,
+"" as 	Service	,
+"" as 	Priority	,
+"" as 	TerminalSearchName	,
+Hentenavn||poststed_fra as 	PickUpSearchName	,
+"" as 	PickupDate	,
+RAMMETIDFRAKL_TIL as 	PickupTime	,
+Bringenavn||poststed_til as 	DeliverySearchName	,
+"" as 	DeliveryDate	,
+AVGANGSTID_FRA as 	DeliveryTime	,
+ANTALL as 	NumberOfPackages	,
+LASTB  as 	PackageType	,
+"" as 	GrossWeight	,
+"" as 	Pallets	,
+"" as 	LoadingMeters	,
+"" as 	IsThermoGoods	,
+"" as 	TemperatureFrom	,
+"" as 	TemperatureTo	,
+"" as 	StartingDate	,
+"" as 	ExpiryDate	,
+"" as 	LoadPlusDays	,
+"" as 	UnloadPlusDays	,
+(UKEDAG_VAKT =1) as 	IsMonday	,
+(UKEDAG_VAKT =2) as 	IsTuesday	,
+(UKEDAG_VAKT =3) as IsWednesDay	,
+(UKEDAG_VAKT =4) as IsThursday	,
+(UKEDAG_VAKT =5) as 	IsFriday	,
+(UKEDAG_VAKT =6) as 	IsSaturday	,
+(UKEDAG_VAKT =7)  as 	IsSunday	
+
+
+from AlystraShifts limit 10;
+/*
+.once amphoratrips.txt
+select distinct
+"" as 	OrderTemplateNumber	,
+NPB_OEBS_ACCOUNTNUMBER as 	Principal	,
+"" as 	Department	,
+"f" as 	HandlingCode	,
+"" as 	Reference	,
+"" as 	Service	,
+"" as 	Priority	,
+"" as 	TerminalSearchName	,
+NAVN||postnr as 	PickUpSearchName	,
+"" as 	PickupDate	,
+RAMMETIDFRAKL_TIL as 	PickupTime	,
+Bringenavn||poststed_til as 	DeliverySearchName	,
+"" as 	DeliveryDate	,
+AVGANGSTID_FRA as 	DeliveryTime	,
+ANTALL as 	NumberOfPackages	,
+LASTB  as 	PackageType	,
+"" as 	GrossWeight	,
+"" as 	Pallets	,
+"" as 	LoadingMeters	,
+"" as 	IsThermoGoods	,
+"" as 	TemperatureFrom	,
+"" as 	TemperatureTo	,
+"" as 	StartingDate	,
+"" as 	ExpiryDate	,
+"" as 	LoadPlusDays	,
+"" as 	UnloadPlusDays	,
+(UKEDAG_VAKT =1) as 	IsMonday	,
+(UKEDAG_VAKT =2) as 	IsTuesday	,
+(UKEDAG_VAKT =3) as IsWednesDay	,
+(UKEDAG_VAKT =4) as IsThursday	,
+(UKEDAG_VAKT =5) as 	IsFriday	,
+(UKEDAG_VAKT =6) as 	IsSaturday	,
+(UKEDAG_VAKT =7)  as 	IsSunday	
+*/
+
+from AlystraShifts limit 10;
 
 --equipment
 .once "equipment.txt"
@@ -100,9 +187,48 @@ select distinct trtjeneste from alystrashifts;
 
 select distinct lasthus_id, start_depot, end_depot;
 
-.once "aktoer_enhet.txt"
-select distinct ENHETVAKT, START_DEPOT, AKTOERNR, KUNDE, ERPOSTAL, ERBEDRIFT from AlystraShifts order by KUNDE;
+.once "aktoer.txt"
+select distinct AKTOERNR, KUNDE, ERPOSTAL, ERBEDRIFT from AlystraShifts order by KUNDE;
 
 
 
+
+
+
+
+.once pickupadr.txt
+select searchname||
+ printf("%04d", 
+row_number() over (partition by searchname
+order by searchname,gateadresse))
+, n, postnr, poststed, gateadresse
+from (
+
+ select distinct "NO"||substr(replace(trim(upper(HENTENAVN)), " ", ""),1,9)||substr(replace(trim(upper(POSTSTED_FRA)), " ", ""),1,5) as searchname,
+HENTENAVN as N, POSTNR_FRA as postnr,	POSTSTED_FRA as poststed,	
+GATEADRESSE_FRA as gateadresse
+ from AlystraShifts
+ group by searchname, hentenavn, postnr_fra, poststed_fra, gateadresse_fra
+);
+---legge til til-adresser, adresser fra amphora, adresser fra matvaretilsyn
+
+.once testreport.txt
+select distinct vaktnr, rutenr, aktoernr, kunde, avtalenummer, ukedagordre, hentenavn, bringenavn, avgangstid_til, avgangstid_fra, SEQ_LOAD_EVENT, SEQ_UNLOAD_EVENT, antall, lastb
+from AlystraShifts
+order by vaktnr, rutenr, aktoernr, kunde, avtalenummer, ukedagordre, hentenavn, bringenavn, avgangstid_til, avgangstid_fra, SEQ_LOAD_EVENT, SEQ_UNLOAD_EVENT, antall, lastb;
+
+
+
+
+.mode csv
+.separator ";"
+
+.import "Fishery_establishments manip.csv" AdresserFisk
+
+
+create table Postnr (code Varchar,name Varchar,district Varchar,districtname Varchar,kind Varchar);
+
+
+select distinct a.NAVN, a.ADRESSE_1, a.POSTNR_ID, b.name from AmphoraTrips a, Postnr b where a.postnr_id = b.code;
+select distinct a.NAVN, a.ADRESSE_1, a.POSTNR_ID, b.name from AmphoraTrips a left outer join Postnr b on a.postnr_id = b.code;
 
