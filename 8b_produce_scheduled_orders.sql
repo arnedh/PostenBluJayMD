@@ -46,13 +46,13 @@ create table basis5 as select distinct
 "" as "Priority",
 "TerminalSearchName", 
 "PickUpSearchName",
-"PickupDate",
-"PickupFromTime",
-"PickupTillTime",
+"01.01.2019" as "PickupDate",
+case when length(PickupFromTime)=0 then '08:00' else PickupFromTime end as "PickupFromTime",
+case when length(PickupTillTime)=0 then '16:00' else PickupTillTime end as "PickupTillTime",
 "TerminalSearchName" as "DeliverySearchName",
-"" as "DeliveryDate",
-"" as "DeliveryFromTime",
-"" as "DeliveryTillTime",
+"01.01.2019"  as "DeliveryDate",
+'08:00' as "DeliveryFromTime",
+'17:00' "DeliveryTillTime",
 "01.01.2019" as "StartingDate",
 "31.12.2099" as "ExpiryDate",
 "" as "LoadPlusDays",
@@ -70,11 +70,11 @@ select
 "" as "Priority",
 "TerminalSearchName",
 "PickUpSearchName",
-"" as "PickupDate",
+"01.01.2019" as "PickupDate",
 RAMMETIDFRAKL_FRA as "PickupFromTime",
 RAMMETIDTILKL_FRA"PickupTillTime",
 "DeliverySearchName",
-"" as "DeliveryDate",
+"01.01.2019" as "DeliveryDate",
 RAMMETIDFRAKL_TIL as "DeliveryFromTime",
 RAMMETIDTILKL_TIL as "DeliveryTillTime",
 "01.01.2019" as "StartingDate",
@@ -84,7 +84,9 @@ RAMMETIDTILKL_TIL as "DeliveryTillTime",
 "ukedagordre"
 from basisalystra5;
 
-.once _scheduledTemplates.csv
+
+drop table basis;
+create table basis as 
 select distinct
 "OrderTemplateNumber",
 "Principal",
@@ -105,23 +107,27 @@ select distinct
 "ExpiryDate",
 "LoadPlusDays",
 "UnloadPlusDays",
-(instr("ukedagordre", "1") > 0) as IsMonday,
-(instr("ukedagordre", "2") > 0) as IsTuesday,
-(instr("ukedagordre", "3") > 0) as IsWednesDay,
-(instr("ukedagordre", "4") > 0) as IsThursday,
-(instr("ukedagordre", "5") > 0) as IsFriday,
-(instr("ukedagordre", "6") > 0) as IsSaturday,
-(instr("ukedagordre", "7") > 0) as IsSunday
+case when instr("ukedagordre", "1")>0 then "TRUE" else "FALSE" end as IsMonday,
+case when instr("ukedagordre", "2")>0 then "TRUE" else "FALSE" end   as IsTuesday,
+case when instr("ukedagordre", "3")>0 then "TRUE" else "FALSE" end   as IsWednesDay,
+case when instr("ukedagordre", "4")>0 then "TRUE" else "FALSE" end   as IsThursday,
+case when instr("ukedagordre", "5")>0 then "TRUE" else "FALSE" end   as IsFriday,
+case when instr("ukedagordre", "6")>0 then "TRUE" else "FALSE" end  as IsSaturday,
+case when instr("ukedagordre", "7")>0 then "TRUE" else "FALSE" end   as IsSunday
 from basis5
 order by Reference;
 
-.once _scheduledOrderLines.csv
+.once _scheduledOrders.csv
+select * from basis;
+
+drop table basisLines;
+create table basisLines as  
 select 
 "Reference", 
 ANTALL as "NumberOfPackages", 
 "PackageType", 
-"" as "GrossWeight",
-"" as "Pallets",
+ANTALL*250*KONTAINERFAKTOR as "GrossWeight",
+ANTALL*KONTAINERFAKTOR as "Pallets",
 "" as "LoadingMeters",
 "" as "IsThermoGoods",
 "" as "TemperatureFrom",
@@ -130,7 +136,7 @@ from basisAlystra2
 union all
 select 
 "Reference",
-"NumberOfPackages",
+case when length("NumberOfPackages")=0 then '1' else "NumberOfPackages" end as "NumberOfPackages",
 "PackageType", 
 "GrossWeight",
 "Pallets",
@@ -139,6 +145,9 @@ select
 "" as "TemperatureFrom",
 "" as "TemperatureTo"
 from basisAmphora4;
+
+.once _scheduledOrderLines.csv
+select * from basisLines;
 
 
 .once _schedule_shift_template.csv
@@ -169,3 +178,106 @@ Short||" shift plan" as name,
 "00000000" as comment
 from AlystraShifts a, AlystraDepts adepts, depts where a.enhetvakt = adepts.enhetvakt 
 and adepts.Column1 = depts.Dept;
+
+
+.once _ordersWithOrderLines.csv
+select 
+"OrderTemplateNumber",
+"Principal",
+"Department",
+"HandlingCode",
+o."Reference" as Reference,
+"Priority",
+"TerminalSearchName",
+"PickUpSearchName",
+"PickupDate",
+"PickupFromTime",
+"PickupTillTime",
+"DeliverySearchName",
+"DeliveryDate",
+"DeliveryFromTime",
+"DeliveryTillTime",
+"StartingDate",
+"ExpiryDate",
+"LoadPlusDays",
+"UnloadPlusDays",
+IsMonday,
+ IsTuesday,
+IsWednesDay,
+IsThursday,
+IsFriday,
+IsSaturday,
+IsSunday,
+"NumberOfPackages",
+"PackageType", 
+"GrossWeight",
+"Pallets",
+"LoadingMeters"
+from basis o, basisLines ol where o.Reference = ol.Reference;
+
+
+.mode quote
+.once _conflatedScheduledOrders.csv
+select 
+"OrderTemplateNumber",
+"Principal",
+"Department",
+"HandlingCode",
+o."Reference" as Reference,
+"Priority",
+"TerminalSearchName",
+"PickUpSearchName",
+"PickupDate",
+"PickupFromTime",
+"PickupTillTime",
+"DeliverySearchName",
+"DeliveryDate",
+"DeliveryFromTime",
+"DeliveryTillTime",
+"StartingDate",
+"ExpiryDate",
+"LoadPlusDays",
+"UnloadPlusDays",
+IsMonday,
+ IsTuesday,
+IsWednesDay,
+IsThursday,
+IsFriday,
+IsSaturday,
+IsSunday,
+group_concat(cast("NumberOfPackages" as string),";") as "NumberOfPackages",
+group_concat("PackageType",";") as "PackageType", 
+group_concat(cast("GrossWeight" as string),";") as "GrossWeight",
+group_concat(cast("Pallets" as string), ";") as  "Pallets",
+group_concat(cast("LoadingMeters" as string), ";") as  "LoadingMeters",
+count(*) as ct
+from basis o, basisLines ol where o.Reference = ol.Reference
+group by 
+"OrderTemplateNumber",
+"Principal",
+"Department",
+"HandlingCode",
+o."Reference",
+"Priority",
+"TerminalSearchName",
+"PickUpSearchName",
+"PickupDate",
+"PickupFromTime",
+"PickupTillTime",
+"DeliverySearchName",
+"DeliveryDate",
+"DeliveryFromTime",
+"DeliveryTillTime",
+"StartingDate",
+"ExpiryDate",
+"LoadPlusDays",
+"UnloadPlusDays",
+IsMonday,
+IsTuesday,
+IsWednesDay,
+IsThursday,
+IsFriday,
+IsSaturday,
+IsSunday ;
+
+.mode csv
