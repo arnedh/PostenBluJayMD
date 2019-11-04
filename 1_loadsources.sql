@@ -8,8 +8,8 @@
 
 
 
-drop table Supplier;
-drop table Customer;
+drop table if exists Supplier;
+drop table if exists Customer;
 
 
 .header on
@@ -29,7 +29,7 @@ drop table Customer;
 .mode csv
 .separator ";"
 
-drop table AlystraShifts;
+drop table if exists AlystraShifts;
 
 
 ----don't encode, convert, save
@@ -45,23 +45,23 @@ drop table AlystraShifts;
 .import "Strategisk-OttarView-110-2019-01-18-1409.txt" AlystraShifts                                       
 .import "Strategisk-OttarView-112-2019-01-18-1409.txt" AlystraShifts    
 
-drop table AmphoraCustomerNumbers;
+drop table if exists AmphoraCustomerNumbers;
 .import "Amphora customer numbers.csv" AmphoraCustomerNumbers       
 
 
-drop table AmphoraTrips;
+drop table if exists AmphoraTrips;
 .import "Fixed pickup orders from Amphora_2.csv" AmphoraTrips     
 
-drop table AmphoraDepts;
+drop table if exists AmphoraDepts;
 .import "AmphoraDepts.csv" AmphoraDepts
 
-drop table AlystraDepts;
+drop table if exists AlystraDepts;
 .import "AlystraDepts.csv" AlystraDepts
 
-drop table LastbPackage;
+drop table if exists LastbPackage;
 .import "LastbPackage.csv" LastbPackage
 
-drop table depts;
+drop table if exists depts;
 .import "depts.csv" depts
 
 
@@ -69,8 +69,8 @@ drop table depts;
 .mode tabs
 .separator "\t"
 
-drop table Enhet;
-drop table Adresse;
+drop table if exists Enhet;
+drop table if exists Adresse;
 .import "20190508102014_NPBP7_EnhetFO.txt" Enhet
 .import "20190508092200_NPBP7_Adresse.txt" Adresse
 

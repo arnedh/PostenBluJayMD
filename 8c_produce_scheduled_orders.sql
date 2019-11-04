@@ -1,6 +1,6 @@
 --join ordersbasis to washedaddresses, finding searchname
 
-drop table washbasis;
+drop table if exists washbasis;
 create table washbasis as 
 select distinct * from (select wa.in_name, wa.in_addr, wa.in_zip, wa.in_city, adrLookup.searchnameref  from washedaddresses wa, adrLookup 
 where adrLookup.in_name = wa.in_name 
@@ -15,34 +15,34 @@ and adrLookup.out_zip = wa.out_zip
 and adrLookup.out_city = wa.out_city);
 
 
-drop table basisalystra4;
+drop table if exists basisalystra4;
 create table basisalystra4 as select wb.searchnameref as "PickupSearchname", ba3.* from basisalystra3 ba3 left join washbasis wb
 on "HENTENAVN"= wb.in_name 
 and "GATEADRESSE_FRA" = wb.in_addr
 and "POSTNR_FRA" = wb.in_zip
 and "POSTSTED_FRA" = wb.in_city;
 
-drop table basisalystra5;
+drop table if exists basisalystra5;
 create table basisalystra5 as select wb.searchnameref as "DeliverySearchname", ba4.* from basisalystra4 ba4 left join washbasis wb
 on "BRINGENAVN"= wb.in_name 
 and "GATEADRESSE_TIL" = wb.in_addr
 and "POSTNR_TIL" = wb.in_zip
 and "POSTSTED_TIL" = wb.in_city;
 
-drop table basisamphora5;
+drop table if exists basisamphora5;
 create table basisamphora5 as select wb.searchnameref as "PickupSearchname", ba4.* from basisamphora4 ba4 left join washbasis wb
 on "pu_nameLine1"= wb.in_name 
 and "pu_addressLine1" = wb.in_addr
 and "pu_postalCode" = wb.in_zip
 and "pu_CITY" = wb.in_city;
 
-drop table basis5;
+drop table if exists basis5;
 create table basis5 as select distinct
-"OrderTemplateNumber",
+--"OrderTemplateNumber",
 "Principal",
 "Department",
 "HandlingCode",
-"Reference",
+"RefBase",
 "" as "Priority",
 "TerminalSearchName", 
 "PickUpSearchName",
@@ -57,15 +57,23 @@ case when length(PickupTillTime)=0 then '16:00' else PickupTillTime end as "Pick
 "31.12.2099" as "ExpiryDate",
 "" as "LoadPlusDays",
 "" as "UnloadPlusDays",
-"ukedagordre"
+"ukedagordre",
+case when length("NumberOfPackages")=0 then '1' else "NumberOfPackages" end as "NumberOfPackages",
+"PackageType", 
+"GrossWeight",
+"Pallets",
+"LoadingMeters",
+"" as "IsThermoGoods",
+"" as "TemperatureFrom",
+"" as "TemperatureTo"
 from basisamphora5
 union all 
 select 
-"Reference" as OrderTemplateNumber, 
+--"Reference" as OrderTemplateNumber, 
 "Principal",
 "Department",
 "HandlingCode",
-"Reference",
+"RefBase",
 --"" as "Service",
 "" as "Priority",
 "TerminalSearchName",
@@ -81,18 +89,28 @@ RAMMETIDTILKL_TIL as "DeliveryTillTime",
 "31.12.2099" as "ExpiryDate",
 "" as "LoadPlusDays",
 "" as "UnloadPlusDays",
-"ukedagordre"
+"ukedagordre",
+ANTALL as "NumberOfPackages", 
+"PackageType", 
+ANTALL*250*KONTAINERFAKTOR as "GrossWeight",
+ANTALL*KONTAINERFAKTOR as "Pallets",
+"" as "LoadingMeters",
+"" as "IsThermoGoods",
+"" as "TemperatureFrom",
+"" as "TemperatureTo" 
 from basisalystra5;
 
-
-drop table basis;
+----Reference : partition per RefBase, most others above package level
+--Must expand to include all package inf
+drop table if exists basis;
 create table basis as 
-select distinct
-"OrderTemplateNumber",
+
+select 
+dense_rank() over win ind,
+RefBase,
 "Principal",
 "Department",
 "HandlingCode",
-"Reference",
 "Priority",
 "TerminalSearchName",
 "PickUpSearchName",
@@ -108,43 +126,73 @@ select distinct
 "LoadPlusDays",
 "UnloadPlusDays",
 case when instr("ukedagordre", "1")>0 then "TRUE" else "FALSE" end as IsMonday,
-case when instr("ukedagordre", "2")>0 then "TRUE" else "FALSE" end   as IsTuesday,
-case when instr("ukedagordre", "3")>0 then "TRUE" else "FALSE" end   as IsWednesDay,
-case when instr("ukedagordre", "4")>0 then "TRUE" else "FALSE" end   as IsThursday,
-case when instr("ukedagordre", "5")>0 then "TRUE" else "FALSE" end   as IsFriday,
-case when instr("ukedagordre", "6")>0 then "TRUE" else "FALSE" end  as IsSaturday,
-case when instr("ukedagordre", "7")>0 then "TRUE" else "FALSE" end   as IsSunday
-from basis5
-order by Reference;
-
-.once _scheduledOrders.csv
-select * from basis;
-
-drop table basisLines;
-create table basisLines as  
-select 
-"Reference", 
-ANTALL as "NumberOfPackages", 
-"PackageType", 
-ANTALL*250*KONTAINERFAKTOR as "GrossWeight",
-ANTALL*KONTAINERFAKTOR as "Pallets",
-"" as "LoadingMeters",
-"" as "IsThermoGoods",
-"" as "TemperatureFrom",
-"" as "TemperatureTo" 
-from basisAlystra2
-union all
-select 
-"Reference",
-case when length("NumberOfPackages")=0 then '1' else "NumberOfPackages" end as "NumberOfPackages",
+case when instr("ukedagordre", "2")>0 then "TRUE" else "FALSE" end as IsTuesday,
+case when instr("ukedagordre", "3")>0 then "TRUE" else "FALSE" end as IsWednesDay,
+case when instr("ukedagordre", "4")>0 then "TRUE" else "FALSE" end as IsThursday,
+case when instr("ukedagordre", "5")>0 then "TRUE" else "FALSE" end as IsFriday,
+case when instr("ukedagordre", "6")>0 then "TRUE" else "FALSE" end as IsSaturday,
+case when instr("ukedagordre", "7")>0 then "TRUE" else "FALSE" end as IsSunday,
+"NumberOfPackages", 
 "PackageType", 
 "GrossWeight",
 "Pallets",
 "LoadingMeters",
-"" as "IsThermoGoods",
-"" as "TemperatureFrom",
-"" as "TemperatureTo"
-from basisAmphora4;
+"IsThermoGoods",
+"TemperatureFrom",
+"TemperatureTo" 
+from basis5
+window win as (partition by "RefBase" order by "Principal","Department","PickUpSearchName",
+"PickupDate",
+"PickupFromTime",
+"PickupTillTime",
+"DeliverySearchName",
+"DeliveryDate",
+"DeliveryFromTime",
+"DeliveryTillTime")
+;
+
+.once _scheduledOrders.csv
+select distinct
+RefBase||"-"||ind as OrderTemplateNumber,
+"Principal",
+"Department",
+"HandlingCode",
+RefBase||"-"||ind as Reference,
+"Priority",
+"TerminalSearchName",
+"PickUpSearchName",
+"PickupDate",
+"PickupFromTime",
+"PickupTillTime",
+"DeliverySearchName",
+"DeliveryDate",
+"DeliveryFromTime",
+"DeliveryTillTime",
+"StartingDate",
+"ExpiryDate",
+"LoadPlusDays",
+"UnloadPlusDays",
+IsMonday,
+IsTuesday,
+IsWednesDay,
+IsThursday,
+IsFriday,
+IsSaturday,
+IsSunday from basis;
+
+drop table if exists basisLines;
+create table basisLines as  
+select 
+RefBase||"-"||ind as Reference,
+"NumberOfPackages", 
+"PackageType", 
+"GrossWeight",
+"Pallets",
+"LoadingMeters",
+"IsThermoGoods",
+"TemperatureFrom",
+"TemperatureTo" 
+from basis;
 
 .once _scheduledOrderLines.csv
 select * from basisLines;
@@ -182,11 +230,11 @@ and adepts.Column1 = depts.Dept;
 
 .once _ordersWithOrderLines.csv
 select 
-"OrderTemplateNumber",
+RefBase||"-"||ind as OrderTemplateNumber,
 "Principal",
 "Department",
 "HandlingCode",
-o."Reference" as Reference,
+RefBase||"-"||ind as Reference,
 "Priority",
 "TerminalSearchName",
 "PickUpSearchName",
@@ -202,7 +250,7 @@ o."Reference" as Reference,
 "LoadPlusDays",
 "UnloadPlusDays",
 IsMonday,
- IsTuesday,
+IsTuesday,
 IsWednesDay,
 IsThursday,
 IsFriday,
@@ -213,17 +261,17 @@ IsSunday,
 "GrossWeight",
 "Pallets",
 "LoadingMeters"
-from basis o, basisLines ol where o.Reference = ol.Reference;
+from basis;
 
 
 .mode quote
 .once _conflatedScheduledOrders.csv
 select 
-"OrderTemplateNumber",
+RefBase||"-"||ind as OrderTemplateNumber,
 "Principal",
 "Department",
 "HandlingCode",
-o."Reference" as Reference,
+RefBase||"-"||ind as Reference,
 "Priority",
 "TerminalSearchName",
 "PickUpSearchName",
@@ -239,7 +287,7 @@ o."Reference" as Reference,
 "LoadPlusDays",
 "UnloadPlusDays",
 IsMonday,
- IsTuesday,
+IsTuesday,
 IsWednesDay,
 IsThursday,
 IsFriday,
@@ -251,13 +299,12 @@ group_concat(cast("GrossWeight" as string),";") as "GrossWeight",
 group_concat(cast("Pallets" as string), ";") as  "Pallets",
 group_concat(cast("LoadingMeters" as string), ";") as  "LoadingMeters",
 count(*) as ct
-from basis o, basisLines ol where o.Reference = ol.Reference
+from basis 
 group by 
 "OrderTemplateNumber",
 "Principal",
 "Department",
 "HandlingCode",
-o."Reference",
 "Priority",
 "TerminalSearchName",
 "PickUpSearchName",

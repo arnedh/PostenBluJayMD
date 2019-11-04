@@ -1,14 +1,14 @@
 --load and process addresses
 --washedaddress is same as unwashed, but with washed columns.
 
-drop table WashedAddresses;
+drop table if exists WashedAddresses;
 .import washedaddresses.csv washedaddresses
 
-drop table logisticsbasis;
+drop table if exists logisticsbasis;
 create table logisticsbasis as 
 select distinct in_name, out_addr1, out_zip, out_city, (case (country_code) when "" then "NO" else country_code end) as  country from washedAddresses ;
 
-drop table mainadrX;
+drop table if exists mainadrX;
 create table mainadrX as 
 select distinct adr.weight, wadr.in_name, wadr.out_addr1, wadr.out_zip, wadr.out_city,  (case (wadr.country_code) when "" then "NO" else country_code end) as  country, rel.relationNumber, rel.searchName
 from scoredAddresses adr, relations rel, washedaddresses wadr
@@ -20,10 +20,10 @@ and adr.postalCode = wadr.in_zip
 and adr.city = wadr.in_city
 order by rel.relationNumber, rel.searchName;
 
-drop table reladrX;
+drop table if exists reladrX;
 create table reladrX as select *, searchname as searchnameref, "" as searchnamedef from (select mainadrX.*, row_number() over (partition by relationNumber order by relationNumber, weight desc ) as place from mainadrX) where place = 1;
 
-drop table remaining;
+drop table if exists remaining;
 create table remaining as select * from (
 select logisticsbasis.*, reladrX.searchnameref from logisticsbasis left join reladrX on 
  logisticsbasis.in_name = reladrX.in_name
@@ -34,7 +34,7 @@ where searchnameref is null;
 
 --for addresses that don't have searchnamedef, create searchname
 
-drop table adrSN;
+drop table if exists adrSN;
 create table adrSN as select *,replace(replace(replace(replace(replace(replace(
 replace(replace(replace(replace(replace(replace(
 replace(replace(replace(replace(replace(replace(
@@ -63,13 +63,13 @@ trim(upper(out_city))," ",""),"(","") ,")","") ,"-","") ,"/","") ,"#","") ,":","
 from remaining));
 
 
-drop table nonRelAdr;
+drop table if exists nonRelAdr;
 create table nonRelAdr as 
 select snbasis||printf("%04d", coalesce(usn2.maxnum,0)+row_number() over (partition by snBasis order by snBasis, in_name, out_addr1)) as searchname,*
 from adrSN left join usn2 on adrSN.snBasis = usn2.searchBase;
 
 
-drop table adrLookup;
+drop table if exists adrLookup;
 create table adrLookup as 
 select in_name ,
   out_addr1 ,
@@ -95,7 +95,7 @@ delete from adrLookup where in_name = "" and out_addr1="";
 select * from adrLookup;
 
 
-drop table logisticsadresses; 
+drop table if exists logisticsadresses; 
 create table logisticsadresses as select in_name ,
   out_addr1 ,
   out_zip ,

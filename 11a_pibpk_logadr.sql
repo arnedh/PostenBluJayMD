@@ -1,4 +1,4 @@
-drop table pibpk;
+drop table if exists pibpk;
 
 create table pibpk as select distinct 1 as weight, "drm" as source, 'pib-pk' as kind, Enhet."Navn 4. Ledd",
 	 Enhet."Beskrivelse", Adresse."Gatenavn"||" "||Adresse."Gatenummer" as Adr, Adresse."Postnummer", 

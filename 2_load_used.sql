@@ -1,6 +1,6 @@
 ---export from BluJay
-drop table UsedSearchNames;
+drop table if exists UsedSearchNames;
 .import "UsedSearchNames.csv" UsedSearchNames
 
-drop table bannedIds;
+drop table if exists bannedIds;
 .import "bannedIds.csv" bannedIds

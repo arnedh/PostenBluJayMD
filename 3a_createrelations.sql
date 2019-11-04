@@ -11,7 +11,7 @@
 
 --update usedsearchname
 
-drop table supplierBasis;
+drop table if exists supplierBasis;
 create table supplierBasis as
 select * from (
 select row_number() over (partition by "Vendor Number" order by "Vendor Name" ,
@@ -38,7 +38,7 @@ phone,
 from Supplier
 where "Source Site"="TRANSPORT") where r=1;
 
-drop table customerBasis;
+drop table if exists customerBasis;
 create table customerBasis as
 select * from (
 select row_number() over (partition by ACCOUNT_NUMBER order by ACCOUNT_NUMBER,
@@ -65,7 +65,7 @@ from Customer where "SITE_USE_CODE" ="BILL_TO" and ACCOUNT_NUMBER not in (select
 /*
 select searchName, substr(searchName,1,length(searchName)-4), substr(searchName,length(searchName)-3, length(searchName)), cast( substr(searchName,length(searchName)-3, length(searchName)) as int) from UsedSearchNames;
 */
-drop table relBasis;
+drop table if exists relBasis;
 create table relBasis as select distinct
  "" as searchName,
  ACCOUNT_NUMBER as relationNumber, 
@@ -136,7 +136,7 @@ from supplierBasis;
 delete from usedSearchNames where relationNumber in (select id from bannedIds);
 delete from usedSearchNames where searchName like "DKLOAD%";
 
-drop table relSN;
+drop table if exists relSN;
 create table relSN as select *,replace(replace(replace(replace(replace(replace(
 replace(replace(replace(replace(replace(replace(
 replace(replace(replace(replace(replace(replace(
@@ -167,7 +167,7 @@ from (select * from relBasis where relationNumber not in (select distinct relati
 
 
 
-drop table usn; 
+drop table if exists usn; 
 create table usn as select searchBase, max(num) as maxnum from (select searchName, 
 substr(searchName,1,length(searchName)-4) as searchBase, 
 substr(searchName,length(searchName)-3, length(searchName)) as numText, 
@@ -175,7 +175,7 @@ cast( substr(searchName,length(searchName)-3, length(searchName)) as int) as num
 from UsedSearchNames) group by searchBase;
 
 ---what about those that exist already in USN?
-drop table relations;
+drop table if exists relations;
 create table relations as select snbasis||printf("%04d", coalesce(usn.maxnum,0)+row_number() over (partition by snBasis order by snBasis, relationNumber)) as searchname,
  relationNumber ,
   nameLine1 ,
@@ -248,7 +248,7 @@ insert into UsedSearchNames select searchName, relationNumber, nameLine1 from re
 .once _usedsearchname1.csv
 select * from usedsearchnames;
 
-drop table usn2; 
+drop table if exists usn2; 
 create table usn2 as select searchBase, max(num) as maxnum from (select searchName, 
 substr(searchName,1,length(searchName)-4) as searchBase, 
 substr(searchName,length(searchName)-3, length(searchName)) as numText, 

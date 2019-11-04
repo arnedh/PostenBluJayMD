@@ -1,5 +1,5 @@
 --for all address types, add to big list, with scores
- drop table cdh;
+ drop table if exists cdh;
  create table cdh as 
 select 
  org_id,
@@ -25,7 +25,7 @@ select
  city, 
  country;
 
-drop table alystrabasis2;
+drop table if exists alystrabasis2;
 create table alystrabasis2  as 
 select count(*) as weight, AKTOERNR,KUNDE,ERBEDRIFT,nameLine1, addressLine1, adrtype,	postalCode,	CITY,	country , 
 (ERBEDRIFT =1) and (adrType = "BEDRIFT") as bedrift,
@@ -35,7 +35,7 @@ from
 union select  AKTOERNR,KUNDE,ERBEDRIFT,BRINGENAVN as nameLine1, GATEADRESSE_TIL as addressLine1,	TYPE_TIL as adrtype,	POSTNR_TIL as postalCode,	POSTSTED_TIL as CITY,	 "NO" as country from AlystraShifts)
 group by AKTOERNR,KUNDE,ERBEDRIFT,nameLine1, addressLine1, adrtype,	postalCode,	CITY,	country , bedrift, pib ;
 
-drop table scoredAddresses;
+drop table if exists scoredAddresses;
 create table scoredAddresses as 
 select  row_number() over (order by org_id) r, * from 
  (

@@ -1,4 +1,4 @@
-drop table logRel;
+drop table if exists logRel;
 create table logRel as select
 searchnamedef as Searchname,
 relationnumber as "Relation number", 
@@ -36,7 +36,7 @@ case when length(country)>2 then 'NO' else country end as Country,
 from logisticsadresses
 where relationnumber != "";
 
-drop table logNonRel;
+drop table if exists logNonRel;
 create table logNonRel as
 select
 searchnamedef as Searchname,
