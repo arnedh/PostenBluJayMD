@@ -1,0 +1,14 @@
+cmd
+
+halvorsenar@P-112-100-03762 /cygdrive/c/local/customer
+$ file -i Cusomter_extract.csv
+Cusomter_extract.csv: text/plain; charset=iso-8859-1
+
+iconv -l
+
+
+iconv -f ISO-8859-1 -t UTF-8//TRANSLIT input.file -o out.file
+
+iconv -f ISO-8859-1 -t UTF-8//TRANSLIT  Cusomter_extract.csv -o Customer_extract_utf.csv
+
+iconv -f ISO-8859-1 -t UTF-8//TRANSLIT  Cusomter_extract.csv > Customer_extract_utf.csv

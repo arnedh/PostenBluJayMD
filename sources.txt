@@ -1,0 +1,6 @@
+cusomter extract: downloads (2 versions)
+supplier_extract_modified
+far: cust_extract
+enheter_alle
+underenheter_alle
+offentligsektor
