@@ -49,19 +49,22 @@ and ao2."RAMMETIDTILKL_TIL"=ba2."RAMMETIDTILKL_TIL"
 and ao2."ANTALL"=ba2."ANTALL"
 and ao2."LASTB"=ba2."LASTB";
 
+drop table if exists vakt_lookup;
+create table vakt_lookup as select Reference, min(vaktnr) as vaktnr from alystraOTR3 group by Reference;
 
-drop table if exists preMappingOTR; 
-create table preMappingOTR as select distinct Reference, last_realized_time, pOrD, vaktnr, trip_nb, rank() over win as newseq, dense_rank() over win2 as vakt_rank
-from alystraOTR3
-window win as (partition by vaktnr, trip_nb order by last_realized_time, Reference, pOrD),
- win2 as (partition by Reference order by vaktnr)
-order by vaktnr, trip_nb, Reference,  pOrD, last_realized_time;
+drop table if  exists premappingOTR; 
+create table premappingOTR as 
+select  ao.vaktnr, ao.trip_nb, ao.rute_frakl, ao.Reference, min(ao.last_realized_time) as last_realized_time, ao.pOrD, ao.seq
+from alystraOTR3 ao, vakt_lookup vl where ao.vaktnr = vl.vaktnr and ao.Reference = vl.Reference
+group by ao.vaktnr, ao.trip_nb, ao.Reference, pOrD;
 
-drop table if exists mappingOTR; 
-create table mappingOTR as select Reference, last_realized_time, pOrD, vaktnr, trip_nb, newseq
-from preMappingOTR where vakt_rank =  1
-order by vaktnr, trip_nb, Reference,  pOrD, last_realized_time;
-
+drop table if  exists mappingOTR; 
+create table mappingOTR as 
+select distinct vaktnr, trip_nb, Reference, last_realized_time, pOrD,  rank() over win as newseq 
+from premappingOTR 
+window win as (partition by vaktnr, trip_nb order by  rute_frakl, seq, Reference, pOrD)
+order by vaktnr, trip_nb, Reference,  pOrD, last_realized_time
+;
 
 
 .once mappingOTR.csv

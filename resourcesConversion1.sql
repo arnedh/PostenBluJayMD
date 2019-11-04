@@ -1,0 +1,73 @@
+drop table RESOURCES_20191010143441327022;
+.import "Resourcesbasis\\RESOURCES_20191010143441327022.csv" RESOURCES_20191010143441327022 
+
+
+
+.output Resourcesbasis\\mRESOURCES_20191010143441327022.csv
+.header on
+
+select * from  RESOURCES_20191010143441327022;
+.header off
+
+
+select  RESOURCE_ID,
+NAME,
+"" as ADRES1,
+"" as POSTAL_CODE1,
+"" as CITY1,
+"" as COUNTRYNR1,
+"" as COUNTRYCODE1,
+"" as XSTRING1,
+"" as YSTRING1,
+"" as ADRES2,
+"" as POSTAL_CODE2,
+"" as CITY2,
+"" as COUNTRYNR2,
+"" as COUNTRYCODE2,
+"" as XSTRING2,
+"" as YSTRING2,
+"" as START_NORMAL_WORKTIME,
+"" as END_NORMAL_WORKTIME,
+"" as MAX_NORMAL_WORK_HOURS,
+"" as START_OVERTIME_WORKTIME,
+"" as END_OVERTIME_WORKTIME,
+"" as MAX_OVERTIME_WORK_HOURS,
+"" as RESOURCE_TYPE,
+"" as PRELOADED_START_PLAN,
+"" as PRELOADED_END_PLAN,
+"" as SKIP_START_LOCATION,
+"" as SKIP_END_LOCATION,
+"" as MAX_VOLUME,
+"" as MAX_PIECES,
+"" as MAX_SIZE3,
+"" as ALL_DEPOTS_ALLOWED,
+"" as DEPOT1,
+"" as DEPOT2,
+"" as DEPOT3,
+"" as DEPOT4,
+"" as DEPOT5,
+"" as FIXED_COSTS,
+"" as COST_PER_KM,
+"" as COST_PER_HOUR,
+"" as COST_PER_HOUR_OVERTIME,
+"" as SPEED_CORRECTION_FACTOR,
+"" as PRIORITY,
+"" as TERRITORY,
+"" as STARTDATE,
+DEPARTMENT_CODE,
+"" as RESOURCE_KIND_CODE,
+"" as START_LOC_ID,
+"" as END_LOC_ID,
+"" as USE_FIXED_START,
+"" as FIXED_START_AMPL,
+"" as FIXED_START_TIME,
+"" as HELPER_REQ,
+"" as MAX_TRIP_TIME,
+"" as COUPLE_TIME,
+"" as DECOUPLE_TIME,
+"" as UNIT_NUMBER,
+"" as END
+ from deptresource where department_code = "SVG" and name not in (select name from RESOURCES_20191010143441327022);
+ 
+.header on
+.output stdout
