@@ -32,7 +32,8 @@ drop table if exists Customer;
 drop table if exists AlystraShifts;
 
 
-----don't encode, convert, save
+----don't encode, convert to UTF8, replace all " with '
+
 .import "Strategisk-OttarView-101-2019-01-18-1400.txt" AlystraShifts                          
 .import "Strategisk-OttarView-102-2019-01-18-1400.txt" AlystraShifts                                       
 .import "Strategisk-OttarView-103-2019-01-18-1401.txt" AlystraShifts                                       
