@@ -7,9 +7,8 @@
 
 
 
-drop table BusRelMissing;
-drop table registrations1;
-drop table registrations2;
+drop table if exists BusRelMissing;
+
 
 
 .header on
@@ -18,12 +17,9 @@ drop table registrations2;
 
 
 .import "BusinessRelations_Missing.csv" BusRelMissing 
-.import "_registrations.csv" registrations1
-.import "_registrations2.csv" registrations2
+
 
 .separator ";"
 
-.once registrationsWithBan2.csv
-select * from registrations1 where Relationnumber not in (select relationNumber from BusRelMissing)
-union 
-select * from registrations2 where Relationnumber not in (select relationNumber from BusRelMissing);
+.once registrationsWithBan.csv
+select * from registrations where Relationnumber not in (select relationNumber from BusRelMissing);

@@ -1,0 +1,61 @@
+
+All files in https://service.projectplace.com/pp/pp.cgi/r1922298602,
+or similarly constructed
+
+Unzip all, flat
+Open amphora Excel files, save as UTF8 CSV
+
+rename duplicate column names
+fails on duplicate fields zip&city, previous uses POSTAL_NUMBER;POSTAL_CITY in second occurrence
+
+cygwin:
+cd /cygdrive/c/local/adresses8master/201911
+find > files.txt
+
+./20191120152405_NPBP7_EnhetFO.txt
+./20191120152440_NPBP7_Adresse.txt
+./Amphora customer numbers 19.11.2019.csv
+./Customer_extract_utf.csv
+./CUST_EXTRACT.csv
+./enheter_alle.csv
+./Fixed pickup orders from Amphora 19.11.2019.csv
+./Strategisk-OttarView-101-2019-11-08-1400.txt
+./Strategisk-OttarView-102-2019-11-08-1400.txt
+./Strategisk-OttarView-103-2019-11-08-1400.txt
+./Strategisk-OttarView-104-2019-11-08-1404.txt
+./Strategisk-OttarView-105-2019-11-08-1405.txt
+./Strategisk-OttarView-106-2019-11-08-1405.txt
+./Strategisk-OttarView-107-2019-11-08-1406.txt
+./Strategisk-OttarView-108-2019-11-08-1406.txt
+./Strategisk-OttarView-109-2019-11-08-1407.txt
+./Strategisk-OttarView-110-2019-11-08-1407.txt
+./Strategisk-OttarView-112-2019-11-08-1408.txt
+./supplier_extract_modified.csv
+./underenheter_alle.csv
+
+//example commands for UTF conversion
+halvorsenar@ /cygdrive/c/local/customer
+$ file -i Cusomter_extract.csv
+Cusomter_extract.csv: text/plain; charset=iso-8859-1
+iconv -l
+iconv -f ISO-8859-1 -t UTF-8//TRANSLIT input.file -o out.file
+iconv -f ISO-8859-1 -t UTF-8//TRANSLIT  Cusomter_extract.csv -o Customer_extract_utf.csv
+iconv -f ISO-8859-1 -t UTF-8//TRANSLIT  Cusomter_extract.csv > Customer_extract_utf.csv
+
+
+//actual commands
+
+iconv -f ISO-8859-1 -t UTF-8//TRANSLIT Strategisk-OttarView-101-2019-11-08-1400.txt >_Strategisk-OttarView-101-2019-11-08-1400.txt
+iconv -f ISO-8859-1 -t UTF-8//TRANSLIT Strategisk-OttarView-102-2019-11-08-1400.txt >_Strategisk-OttarView-102-2019-11-08-1400.txt
+iconv -f ISO-8859-1 -t UTF-8//TRANSLIT Strategisk-OttarView-103-2019-11-08-1400.txt >_Strategisk-OttarView-103-2019-11-08-1400.txt
+iconv -f ISO-8859-1 -t UTF-8//TRANSLIT Strategisk-OttarView-104-2019-11-08-1404.txt >_Strategisk-OttarView-104-2019-11-08-1404.txt
+iconv -f ISO-8859-1 -t UTF-8//TRANSLIT Strategisk-OttarView-105-2019-11-08-1405.txt >_Strategisk-OttarView-105-2019-11-08-1405.txt
+iconv -f ISO-8859-1 -t UTF-8//TRANSLIT Strategisk-OttarView-106-2019-11-08-1405.txt >_Strategisk-OttarView-106-2019-11-08-1405.txt
+iconv -f ISO-8859-1 -t UTF-8//TRANSLIT Strategisk-OttarView-107-2019-11-08-1406.txt >_Strategisk-OttarView-107-2019-11-08-1406.txt
+iconv -f ISO-8859-1 -t UTF-8//TRANSLIT Strategisk-OttarView-108-2019-11-08-1406.txt >_Strategisk-OttarView-108-2019-11-08-1406.txt
+iconv -f ISO-8859-1 -t UTF-8//TRANSLIT Strategisk-OttarView-109-2019-11-08-1407.txt >_Strategisk-OttarView-109-2019-11-08-1407.txt
+iconv -f ISO-8859-1 -t UTF-8//TRANSLIT Strategisk-OttarView-110-2019-11-08-1407.txt >_Strategisk-OttarView-110-2019-11-08-1407.txt
+iconv -f ISO-8859-1 -t UTF-8//TRANSLIT Strategisk-OttarView-112-2019-11-08-1408.txt >_Strategisk-OttarView-112-2019-11-08-1408.txt
+
+
+Then: Notepad ++, Find in Files, replace " with ' 

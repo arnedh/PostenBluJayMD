@@ -7,8 +7,8 @@
 
 
 
-drop table BusRelMissing;
-drop table logadrNonrel;
+drop table if exists BusRelMissing;
+drop table if exists logadrNonrel;
 
 
 .header on
