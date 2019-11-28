@@ -36,7 +36,8 @@ phone,
 "" as "terms",
 "Oraganization Number" 
 from Supplier
-where "Source Site"="TRANSPORT") where r=1;
+--where "Source Site"="TRANSPORT"
+) where r=1;
 
 drop table if exists customerBasis;
 create table customerBasis as

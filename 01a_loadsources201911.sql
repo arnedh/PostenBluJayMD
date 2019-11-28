@@ -126,6 +126,7 @@ PHONE,
 PAYMENT_CURRENCY_CODE,
 NAME as terms,
 VAT_REGISTRATION_NUM as "Oraganization Number"
+--Source Site??
 from PreSupplier;
 
 
